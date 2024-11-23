@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="a76caeb0-ff91-4de7-b064-dac71e645e3d" activeEnvironment="Default" name="CountriesAPI_Techademy" resourceRoot="" soapui-version="5.7.2" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="dd77915a-3c27-4359-8a02-fd29c7902932" wadlVersion="http://wadl.dev.java.net/2009/02" name="https://restcountries.com" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>https://restcountries.com</con:endpoint></con:endpoints><con:resource name="Subregion" path="" id="4d5620b8-aa30-426d-aca1-13a2d84e4008"><con:settings/><con:parameters><con:parameter><con:name>subregion</con:name><con:value>subregion</con:value><con:style>TEMPLATE</con:style><con:default>subregion</con:default><con:path xsi:nil="true"/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>{subregion}</con:name><con:style>QUERY</con:style></con:parameter></con:parameters><con:method name="Subregion 1" id="3adc405a-2d96-4606-abf7-d500c14c999f" method="GET"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>404</con:status><con:params/><con:element xmlns:sub="https://restcountries.com/v3.1/subregion/Northern%20Europe/v3.1/subregion/subregion">sub:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:request name="Request 1" id="cc8314d3-dfa6-4f5a-9b3a-6f05a1af6bc6" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>https://restcountries.com/v3.1/subregion/${subregion}</con:endpoint><con:request/><con:originalUri>https://restcountries.com/https://restcountries.com/v3.1/subregion/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="subregion" value="subregion" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>subregion</con:entry></con:parameterOrder></con:request></con:method></con:resource></con:interface><con:testSuite id="ae2ed829-e7de-471f-acc1-e53364e6a227" name="Techademy"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="55721a78-3929-45f7-9b3d-3b55c7856f2d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Fetch Countries" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Fetch Countries" id="838e98da-9ea8-4b31-acc8-5989e0510c61"><con:settings/><con:config service="https://restcountries.com" methodName="Subregion 1" resourcePath="" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Fetch Countries" id="0681ad65-d2cc-427d-ad37-590bdd9dd363" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>https://restcountries.com/v3.1/subregion/Australia</con:endpoint><con:request/><con:originalUri>https://restcountries.com/v3.1/subregion/Northern%20Europe/v3.1/subregion/subregion</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="1a1c2d8c-2f2d-485c-a8ee-da7b0786a76b" name="Valid HTTP Status Codes"><con:configuration><codes>200,404</codes></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>subregion</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="ReadExcelData" id="5b915f44-b211-4fd4-afa6-2e84878529f4"><con:settings/><con:config><script>@Grab(group='org.apache.poi', module='poi', version='5.2.3')
+@Grab(group='org.apache.poi', module='poi-ooxml', version='5.2.3')
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.FileInputStream
+
+// Path to your Excel file
+def excelFile = new File("C:/Users/Bharani/Downloads/subregions.xlsx")
+
+// Create a file input stream for the Excel file
+def fis = new FileInputStream(excelFile)
+def workbook = new XSSFWorkbook(fis)
+def sheet = workbook.getSheetAt(0)  // Get the first sheet
+
+def subregions = context.testCase.testSteps["ReadExcelData"].getPropertyValue("subregions")
+
+// Iterate over the subregions list and trigger API requests
+subregions.each { subregion ->
+    // Set the subregion as a property
+    testRunner.testCase.setPropertyValue("subregion", subregion)
+
+    // Trigger the REST request with the subregion value
+    testRunner.runTestStepByName("GetCountries")
+}
+
+// Return the list of subregions for further use
+return subregions
+</script></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
